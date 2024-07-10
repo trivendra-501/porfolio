@@ -1,0 +1,79 @@
+{% extends 'basic.html' %}
+{% block title %} My Portfolio {% endblock title %}
+
+{% block hero %}
+<style>
+  #hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;  
+    align-items: center;
+    color: white;
+    text-align: center;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{% if request.user.is_authenticated %}/media/{{ user.profile_photo }}{% else %} /media/logo.jpg{% endif %}') no-repeat center center/cover;
+  }
+  .hero-container {
+    z-index: 1;
+  }
+  .hero-container h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    margin: 0;
+  }
+  .hero-container p {
+    font-size: 1.5rem;
+    font-weight: 300;
+  }
+  .typed {
+    font-weight: 500;
+    color: #ff8c00;
+  }
+  @media (max-width: 768px) {
+    .hero-container h1 {
+      font-size: 3rem;
+    }
+    .hero-container p {
+      font-size: 1.2rem;
+    }
+  }
+  .custom-header {
+    color: #660099; /* Teal color */
+}
+.custom-container {
+  color: #ff2222; 
+  text-align: left;
+}
+.custom-container h2 {
+  color: #ffff00; 
+  text-align: left;
+}
+</style>
+
+<section id="hero" class="d-flex flex-column justify-content-center align-items-center">
+  <div class="hero-container" data-aos="fade-in">
+    {% if request.user.is_authenticated %}
+      <h1 class="custom-header">{{ user.first_name }} {{ user.last_name }}</h1>
+      <p>I'm <span class="typed" data-typed-items='{{user.role}}'></span></p>
+    {% else %}
+      <div class="ccustom-container mt-5">
+        <img src= /media/{{user.profile_photo}} alt="" class="img-fluid">
+        <h2>Welcome to My Portfolio Website</h2>
+        <p class="lead">Explore my work and achievements</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock hero %}
+
+{% block body %}
+{% if request.user.is_authenticated %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      <strong>{{ message }} </strong> 
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endif %}
+{% endblock body %}

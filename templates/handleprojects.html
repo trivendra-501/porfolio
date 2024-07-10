@@ -1,0 +1,211 @@
+{% extends 'basic.html' %}
+
+{% block title %} Projects {% endblock title %}
+
+{% block body %} 
+{% load static %}
+<section id="projects" class="projects">
+    <div class="container">
+  
+      <div class="section-title">
+        <h2>Welcome to My Projects</h2>
+      </div>
+  
+      <!-- Button to Add New Project -->
+      <div class="container">
+        <div class="row justify-content-end">
+          <div class="col-auto mb-3">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newProjectModal">+ New Project</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Modal for New Project -->
+      <div class="modal fade" id="newProjectModal" tabindex="-1" aria-labelledby="newProjectModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="newProjectModalLabel">New Project</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div id="createProjectFormContainer">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Display existing projects -->
+      <div class="row">
+        {% for post in posts %}
+        <div class="col-lg-4 col-md-6 icon-box" data-aos="fade-up">
+          <div class="col-lg-4" data-aos="fade-right">
+            <img src="media/{{post.image}}" class="img-fluid" alt="no-image">
+          </div>
+          <br>
+          <div class="icon"><i class="bi bi-briefcase"></i></div>
+          <h4 class="title"><a href="#" data-bs-toggle="modal" data-bs-target="#viewProjectModal{{ post.id }}">{{ post.title }}</a></h4>
+          <p> Project Type: {{ post.type }}</p>
+          <p class="description">Project Description: {{ post.description }}</p>
+          <p>Created on: <b>{{ post.created_at }}</b></p>
+          <div class="row mt-3">
+            <div class="col-6">
+              <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewProjectModal{{ post.id }}">
+                View
+              </button>
+            </div>
+            <div class="col-6">
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteProjectModal{{ post.id }}">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- View Project Modal -->
+        <div class="modal fade" id="viewProjectModal{{ post.id }}" tabindex="-1" aria-labelledby="viewProjectModalLabel{{ post.id }}" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="viewProjectModalLabel{{ post.id }}">{{ post.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="col-lg-4" data-aos="fade-right">
+                  <img src="media/{{post.image}}" class="img-fluid" alt="no-image">
+                </div>
+                <p><b>Type:</b> {{ post.type }}</p>
+                <p><b>Project Description:</b>{{ post.description }}</p>
+                <p><b>Created on:</b> {{ post.created_at }}</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProjectModal{{ post.id }}">
+                  Edit
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Edit Project Modal -->
+        <div class="modal fade" id="editProjectModal{{ post.id }}" tabindex="-1" aria-labelledby="editProjectModalLabel{{ post.id }}" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="editProjectModalLabel{{ post.id }}">Edit Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form method="post" action="{% url 'edit_project' post.id %}">
+                  {% csrf_token %}
+                  <div class="col-lg-4" data-aos="fade-right">
+                    <img src="media/{{post.image}}" class="img-fluid" alt="no-image">
+                  </div>
+                  <div class="mb-3">
+                    <label for="editTitle{{ post.id }}" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="editTitle{{ post.id }}" name="title" value="{{ post.title }}">
+                  </div>
+                  <div class="mb-3">
+                    <label for="editType{{ post.id }}" class="form-label">Type</label>
+                    <input type="text" class="form-control" id="editType{{ post.id }}" name="type" value="{{ post.type }}">
+                  </div>
+                  <div class="mb-3">
+                    <label for="editDescription{{ post.id }}" class="form-label">Description</label>
+                    <textarea class="form-control" id="editDescription{{ post.id }}" name="description" rows="3">{{ post.description }}</textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary" data-bs-target = "viewProjectModalLabel{{ post.id }}">Save Changes</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Delete Project Modal -->
+        <div class="modal fade" id="deleteProjectModal{{ post.id }}" tabindex="-1" aria-labelledby="deleteProjectModalLabel{{ post.id }}" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="deleteProjectModalLabel{{ post.id }}">Delete Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p>Are you sure you want to delete '{{ post.title }}'?</p>
+              </div>
+              <div class="modal-footer">
+                <form method="post" action="{% url 'delete_project' post.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {% endfor %}
+      </div>
+  
+    </div>
+  </section>  
+
+<!-- Script to handle modal and form submission -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Load create project form dynamically
+    $('#newProjectModal').on('show.bs.modal', function () {
+      var modal = $(this);
+  
+      // Clear any previous content in modal body
+      modal.find('.modal-body').empty();
+  
+      // Load createProject.html content via AJAX
+      $.ajax({
+        url: "{% url 'createProject' %}", // Replace with your Django view URL for modal content
+        method: 'GET',
+        success: function (data) {
+          // Inject the retrieved HTML content into modal body
+          modal.find('.modal-body').html(data);
+  
+          // Re-bind the form submission to handle it via AJAX
+          document.getElementById('newProjectForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+  
+            const form = event.target;
+            const formData = new FormData(form);
+  
+            fetch("{% url 'createProject' %}", {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+              },
+              body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                // Handle success (e.g., close the modal and refresh the project list)
+                const modalInstance = new bootstrap.Modal(document.getElementById('newProjectModal'));
+                modalInstance.hide();
+                location.reload(); // Reload the page to display updated project list
+              } else {
+                // Handle errors
+                alert('Error creating project');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('Error creating project');
+            });
+          });
+        },
+        error: function () {
+          modal.find('.modal-body').html('<p>Error loading form.</p>');
+        }
+      });
+    });
+  });
+</script>
+
+{% endblock body %}

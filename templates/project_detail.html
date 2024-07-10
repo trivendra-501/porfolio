@@ -1,0 +1,59 @@
+{% extends 'basic.html' %}
+
+{% block title %} Project Details {% endblock title %}
+
+{% block body %}
+<section id="project-detail" class="project-detail">
+    <div class="container">
+        <div class="section-title">
+            <h2>{{ post.title }}</h2>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <img src="media/{{ post.image }}" class="img-fluid" alt="no-image">
+            </div>
+            <div class="col-lg-6">
+                <p><b>Type:</b> {{ post.type }}</p>
+                <p><b> Project Description</b>{{ post.description }}</p>
+                <p><b>Created on:</b> {{ post.created_at }}</p>
+                <div class="mt-3">
+                    <!-- Edit Button Triggering Modal -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProjectModal">
+                        Edit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Edit Project Modal -->
+<div class="modal fade" id="editProjectModal" tabindex="-1" aria-labelledby="editProjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProjectModalLabel">Edit Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'edit_project' post.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="editTitle" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="editTitle" name="editTitle" value="{{ post.title }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editType" class="form-label">Type</label>
+                        <input type="text" class="form-control" id="editType" name="editType" value="{{ post.type }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editDescription" name="editDescription" rows="3">{{ post.description }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
